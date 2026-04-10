@@ -1,0 +1,7 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# Do NOT commit terraform.tfvars to GitHub.
+
+# location       = "East US"
+# prefix         = "studentportal"
+# node_count     = 2
+# vm_size        = "Standard_B2s"

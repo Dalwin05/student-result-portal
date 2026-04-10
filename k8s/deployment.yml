@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-portal
+  namespace: student-portal
+  labels:
+    app: student-portal
+    version: "{{ image_tag }}"
+    project: 24CS2018-DevOps
+spec:
+  replicas: {{ replicas }}
+  selector:
+    matchLabels:
+      app: student-portal
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: student-portal
+        version: "{{ image_tag }}"
+    spec:
+      containers:
+        - name: student-portal
+          image: {{ acr_name }}.azurecr.io/student-result-portal:{{ image_tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          env:
+            - name: FLASK_ENV
+              value: "production"
+      restartPolicy: Always

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block extra_style %}
+.search-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+.search-bar input {
+  flex: 1; padding: 0.6rem 1rem; border: 1px solid #cbd5e0;
+  border-radius: 8px; font-size: 0.95rem; outline: none;
+}
+.search-bar button {
+  padding: 0.6rem 1.2rem; background: #2b6cb0; color: white;
+  border: none; border-radius: 8px; cursor: pointer; font-size: 0.95rem;
+}
+table { width: 100%; border-collapse: collapse; background: white;
+        border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+thead { background: #2b6cb0; color: white; }
+th, td { padding: 0.75rem 1rem; text-align: center; font-size: 0.88rem; }
+th { font-weight: 600; }
+tr:nth-child(even) { background: #f7fafc; }
+tr:hover { background: #ebf4ff; }
+td:nth-child(2) { text-align: left; font-weight: 500; }
+.pass  { color: #276749; font-weight: 700; }
+.fail  { color: #c53030; font-weight: 700; }
+.grade-O  { background: #c6f6d5; color: #22543d; padding: 2px 8px; border-radius: 6px; }
+.grade-Ap { background: #bee3f8; color: #2a4365; padding: 2px 8px; border-radius: 6px; }
+.grade-A  { background: #fefcbf; color: #744210; padding: 2px 8px; border-radius: 6px; }
+.grade-B  { background: #fed7d7; color: #742a2a; padding: 2px 8px; border-radius: 6px; }
+a.detail-link { color: #2b6cb0; text-decoration: none; font-weight: 600; }
+a.detail-link:hover { text-decoration: underline; }
+.stats { display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.stat-card { background: white; border-radius: 10px; padding: 1rem 1.5rem;
+             flex: 1; min-width: 130px; box-shadow: 0 2px 6px rgba(0,0,0,0.07); text-align: center; }
+.stat-card .num { font-size: 1.8rem; font-weight: 700; color: #2b6cb0; }
+.stat-card .lbl { font-size: 0.78rem; color: #718096; margin-top: 2px; }
+{% endblock %}
+
+{% block content %}
+{% set total_students = students|length %}
+{% set passing = students|selectattr("result","eq","PASS")|list|length %}
+<div class="stats">
+  <div class="stat-card"><div class="num">{{ total_students }}</div><div class="lbl">Total Students</div></div>
+  <div class="stat-card"><div class="num" style="color:#276749">{{ passing }}</div><div class="lbl">Passed</div></div>
+  <div class="stat-card"><div class="num" style="color:#c53030">{{ total_students - passing }}</div><div class="lbl">Failed</div></div>
+  <div class="stat-card"><div class="num">
+    {% if students %}{{ (students|map(attribute='average')|sum / total_students)|round(1) }}{% else %}—{% endif %}
+  </div><div class="lbl">Class Average</div></div>
+</div>
+
+<form class="search-bar" action="/search" method="get">
+  <input name="q" placeholder="Search by name or roll number…" value="{{ query or '' }}"/>
+  <button type="submit">Search</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Roll No</th><th>Name</th>
+      <th>Tamil</th><th>English</th><th>Maths</th><th>Science</th><th>Social</th>
+      <th>Total</th><th>Average</th><th>Grade</th><th>Result</th><th>Detail</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for s in students %}
+    <tr>
+      <td>{{ s.roll }}</td>
+      <td>{{ s.name }}</td>
+      <td>{{ s.tamil }}</td><td>{{ s.english }}</td>
+      <td>{{ s.maths }}</td><td>{{ s.science }}</td><td>{{ s.social }}</td>
+      <td><strong>{{ s.total }}</strong></td>
+      <td>{{ s.average }}</td>
+      <td><span class="grade-{{ s.grade.replace('+','p') }}">{{ s.grade }}</span></td>
+      <td class="{{ 'pass' if s.result == 'PASS' else 'fail' }}">{{ s.result }}</td>
+      <td><a class="detail-link" href="/student/{{ s.roll }}">View →</a></td>
+    </tr>
+  {% else %}
+    <tr><td colspan="12" style="padding:2rem;color:#718096">No students found.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

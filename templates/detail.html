@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block extra_style %}
+.card { background: white; border-radius: 14px; padding: 2rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08); max-width: 700px; margin: 0 auto; }
+.card h2 { font-size: 1.3rem; color: #2b6cb0; margin-bottom: 0.3rem; }
+.meta { font-size: 0.85rem; color: #718096; margin-bottom: 1.5rem; }
+.subject-row { display: flex; align-items: center; margin-bottom: 0.8rem; gap: 1rem; }
+.subject-name { width: 90px; font-size: 0.9rem; font-weight: 500; }
+.bar-wrap { flex: 1; background: #e2e8f0; border-radius: 6px; height: 20px; overflow: hidden; }
+.bar { height: 100%; border-radius: 6px; display: flex; align-items: center;
+       padding-left: 8px; color: white; font-size: 0.8rem; font-weight: 600; transition: width 0.6s; }
+.summary { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+.sum-item { flex: 1; min-width: 100px; background: #f7fafc; border-radius: 10px;
+            padding: 0.8rem; text-align: center; }
+.sum-item .n { font-size: 1.5rem; font-weight: 700; color: #2b6cb0; }
+.sum-item .l { font-size: 0.75rem; color: #718096; }
+.back { display: inline-block; margin-bottom: 1rem; color: #2b6cb0;
+        text-decoration: none; font-size: 0.9rem; }
+.back:hover { text-decoration: underline; }
+.result-badge { display: inline-block; padding: 4px 14px; border-radius: 20px;
+                font-weight: 700; font-size: 0.9rem; margin-top: 0.5rem; }
+.PASS { background: #c6f6d5; color: #22543d; }
+.FAIL { background: #fed7d7; color: #742a2a; }
+{% endblock %}
+
+{% block content %}
+<a class="back" href="/">← Back to Results</a>
+<div class="card">
+  <h2>{{ student.name }}</h2>
+  <p class="meta">Roll Number: <strong>{{ student.roll }}</strong>
+    &nbsp;|&nbsp; Result: <span class="result-badge {{ student.result }}">{{ student.result }}</span>
+  </p>
+
+  {% set subjects = [
+    ("Tamil",   student.tamil,   "#e53e3e"),
+    ("English", student.english, "#dd6b20"),
+    ("Maths",   student.maths,   "#2b6cb0"),
+    ("Science", student.science, "#276749"),
+    ("Social",  student.social,  "#6b46c1")
+  ] %}
+
+  {% for name, score, color in subjects %}
+  <div class="subject-row">
+    <span class="subject-name">{{ name }}</span>
+    <div class="bar-wrap">
+      <div class="bar" style="width:{{ score }}%;background:{{ color }}">{{ score }}</div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="summary">
+    <div class="sum-item"><div class="n">{{ student.total }}</div><div class="l">Total / 500</div></div>
+    <div class="sum-item"><div class="n">{{ student.average }}</div><div class="l">Average</div></div>
+    <div class="sum-item"><div class="n" style="color:#6b46c1">{{ student.grade }}</div><div class="l">Grade</div></div>
+  </div>
+</div>
+{% endblock %}
