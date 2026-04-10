@@ -24,7 +24,6 @@ COPY --from=builder /install/deps /usr/local
 # Copy application source
 COPY app/       ./app/
 COPY templates/ ./templates/
-COPY static/    ./static/
 
 # Ownership
 RUN chown -R appuser:appgroup /app
