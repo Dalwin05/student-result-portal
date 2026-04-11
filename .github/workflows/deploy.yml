@@ -100,6 +100,6 @@ jobs:
 
       - name: Verify deployment
         run: |
-          kubectl rollout status deployment/student-portal --timeout=120s
-          kubectl get pods -l app=student-portal
-          kubectl get svc student-portal-service
+          kubectl rollout status deployment/student-portal -n student-portal --timeout=120s
+          kubectl get pods -n student-portal -l app=student-portal
+          kubectl get svc -n student-portal
